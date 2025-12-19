@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خوابگاه‌ها - گروهان شهید توکلی</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* کانتینر اصلی */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* هدر */
+        .top-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            flex: 1;
+        }
+
+        .page-title h1 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .page-title p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+        .back-btn {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        /* آمار خوابگاه‌ها */
+        .dorms-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dorm-stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+
+        .dorm-stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+
+        .dorm-stat-card[data-dorm="1"] {
+            border-color: #3498db;
+        }
+
+        .dorm-stat-card[data-dorm="2"] {
+            border-color: #27ae60;
+        }
+
+        .dorm-stat-card[data-dorm="3"] {
+            border-color: #e74c3c;
+        }
+
+        .dorm-stat-card[data-dorm="4"] {
+            border-color: #f39c12;
+        }
+
+        .dorm-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .dorm-stat-card[data-dorm="1"] .dorm-icon {
+            color: #3498db;
+        }
+
+        .dorm-stat-card[data-dorm="2"] .dorm-icon {
+            color: #27ae60;
+        }
+
+        .dorm-stat-card[data-dorm="3"] .dorm-icon {
+            color: #e74c3c;
+        }
+
+        .dorm-stat-card[data-dorm="4"] .dorm-icon {
+            color: #f39c12;
+        }
+
+        .dorm-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .dorm-count {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .dorm-stat-card[data-dorm="1"] .dorm-count {
+            color: #3498db;
+        }
+
+        .dorm-stat-card[data-dorm="2"] .dorm-count {
+            color: #27ae60;
+        }
+
+        .dorm-stat-card[data-dorm="3"] .dorm-count {
+            color: #e74c3c;
+        }
+
+        .dorm-stat-card[data-dorm="4"] .dorm-count {
+            color: #f39c12;
+        }
+
+        .dorm-status {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        /* نمودار توزیع */
+        .distribution-chart {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .chart-title {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: center;
+            height: 60px;
+            background: #f8f9fa;
+            border-radius: 30px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .chart-bar {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            transition: width 1s ease;
+        }
+
+        .chart-bar.dorm-1 { background: #3498db; }
+        .chart-bar.dorm-2 { background: #27ae60; }
+        .chart-bar.dorm-3 { background: #e74c3c; }
+        .chart-bar.dorm-4 { background: #f39c12; }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .chart-label {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .chart-label .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        /* لیست خوابگاه‌ها */
+        .dorms-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dorm-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .dorm-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+
+        .dorm-card-header {
+            padding: 25px;
+            color: white;
+            position: relative;
+            min-height: 100px;
+        }
+
+        .dorm-card-header.dorm-1 { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .dorm-card-header.dorm-2 { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+        .dorm-card-header.dorm-3 { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .dorm-card-header.dorm-4 { background: linear-gradient(135deg, #f39c12, #e67e22); }
+
+        .dorm-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            opacity: 0.3;
+            position: absolute;
+            top: 15px;
+            left: 20px;
+        }
+
+        .dorm-card-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .dorm-card-desc {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .dorm-card-content {
+            padding: 20px;
+        }
+
+        .residents-list {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .resident-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            transition: all 0.2s;
+        }
+
+        .resident-item:hover {
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .resident-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .resident-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .resident-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 3px;
+            font-size: 0.95rem;
+        }
+
+        .resident-details {
+            display: flex;
+            gap: 10px;
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+
+        .resident-major {
+            background: #e8f4fc;
+            color: #3498db;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+        }
+
+        .empty-residents {
+            text-align: center;
+            padding: 30px 20px;
+            color: #95a5a6;
+        }
+
+        .empty-residents i {
+            font-size: 40px;
+            margin-bottom: 10px;
+            display: block;
+            color: #ddd;
+        }
+
+        /* اطلاعات خوابگاه */
+        .dorm-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .dorm-info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #dee2e6;
+            font-size: 0.9rem;
+        }
+
+        .dorm-info-item:last-child {
+            border-bottom: none;
+        }
+
+        .dorm-info-label {
+            color: #6c757d;
+        }
+
+        .dorm-info-value {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        /* سرپرست خوابگاه */
+        .dorm-supervisor {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .supervisor-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .supervisor-info h4 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+
+        .supervisor-info p {
+            margin: 3px 0 0 0;
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+
+        /* رسپانسیو */
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .dorms-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .dorms-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dorms-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* اسکرول بار سفارشی */
+        .residents-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .residents-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .residents-list::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .residents-list::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- هدر -->
+        <div class="top-bar">
+            <a href="dashboard.html" class="back-btn">
+                <i class="fas fa-arrow-right"></i>
+                بازگشت به داشبورد
+            </a>
+            
+            <div class="page-title">
+                <h1>
+                    <i class="fas fa-home"></i>
+                    خوابگاه‌های گروهان
+                </h1>
+                <p>اطلاعات کامل خوابگاه‌ها و ساکنین هر خوابگاه</p>
+            </div>
+            
+            <div class="user-info">
+                <button id="refreshBtn" class="back-btn" style="background: linear-gradient(to right, #27ae60, #2ecc71);">
+                    <i class="fas fa-sync-alt"></i>
+                    به‌روزرسانی
+                </button>
+            </div>
+        </div>
+
+        <!-- آمار خوابگاه‌ها -->
+        <div class="dorms-stats">
+            <div class="dorm-stat-card" data-dorm="1" onclick="showDormDetails(1)">
+                <i class="fas fa-bed dorm-icon"></i>
+                <div class="dorm-name">خوابگاه ۱</div>
+                <div class="dorm-count" id="dorm1Count">0</div>
+                <div class="dorm-status">نفر</div>
+            </div>
+            
+            <div class="dorm-stat-card" data-dorm="2" onclick="showDormDetails(2)">
+                <i class="fas fa-bed dorm-icon"></i>
+                <div class="dorm-name">خوابگاه ۲</div>
+                <div class="dorm-count" id="dorm2Count">0</div>
+                <div class="dorm-status">نفر</div>
+            </div>
+            
+            <div class="dorm-stat-card" data-dorm="3" onclick="showDormDetails(3)">
+                <i class="fas fa-bed dorm-icon"></i>
+                <div class="dorm-name">خوابگاه ۳</div>
+                <div class="dorm-count" id="dorm3Count">0</div>
+                <div class="dorm-status">نفر</div>
+            </div>
+            
+            <div class="dorm-stat-card" data-dorm="4" onclick="showDormDetails(4)">
+                <i class="fas fa-bed dorm-icon"></i>
+                <div class="dorm-name">خوابگاه ۴</div>
+                <div class="dorm-count" id="dorm4Count">0</div>
+                <div class="dorm-status">نفر</div>
+            </div>
+        </div>
+
+        <!-- نمودار توزیع -->
+        <div class="distribution-chart">
+            <h3 class="chart-title">
+                <i class="fas fa-chart-pie"></i>
+                توزیع ساکنین در خوابگاه‌ها
+            </h3>
+            
+            <div class="chart-bars" id="chartBars">
+                <!-- نمودار میله‌ای اینجا نمایش داده می‌شود -->
+            </div>
+            
+            <div class="chart-labels">
+                <div class="chart-label">
+                    <span class="dot" style="background: #3498db;"></span>
+                    خوابگاه ۱: <span id="dorm1Percent">0%</span>
+                </div>
+                <div class="chart-label">
+                    <span class="dot" style="background: #27ae60;"></span>
+                    خوابگاه ۲: <span id="dorm2Percent">0%</span>
+                </div>
+                <div class="chart-label">
+                    <span class="dot" style="background: #e74c3c;"></span>
+                    خوابگاه ۳: <span id="dorm3Percent">0%</span>
+                </div>
+                <div class="chart-label">
+                    <span class="dot" style="background: #f39c12;"></span>
+                    خوابگاه ۴: <span id="dorm4Percent">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- لیست خوابگاه‌ها -->
+        <div class="dorms-list" id="dormsList">
+            <!-- خوابگاه‌ها اینجا نمایش داده می‌شوند -->
+        </div>
+    </div>
+
+    <script src="js/dorms.js"></script>
+</body>
+</html>

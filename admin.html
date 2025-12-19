@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل مدیریت - گروهان شهید توکلی</title>
+    <style>
+        /* Reset و تنظیمات پایه */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* صفحه مدیریت */
+        .admin-page {
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* هدر */
+        .admin-header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(44, 62, 80, 0.2);
+        }
+
+        .admin-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-header p {
+            opacity: 0.9;
+        }
+
+        /* کارت‌های اصلی */
+        .admin-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-color: #3498db;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: white;
+        }
+
+        .admin-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .admin-card p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        /* بخش محتوا */
+        .content-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #3498db;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-header h2 {
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+        }
+
+        /* فرم‌ها */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .form-control:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        /* جدول‌ها */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: center;
+            color: #2c3e50;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* دکمه‌ها */
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            gap: 5px;
+        }
+
+        /* دکمه‌های عملیات */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* آمار */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 2px solid #f8f9fa;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            border-color: #3498db;
+            transform: translateY(-3px);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #3498db;
+        }
+
+        /* پیام‌ها */
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #bee5eb;
+        }
+
+        /* ناوبری */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* وضعیت */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* جستجو */
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #95a5a6;
+        }
+
+        /* تب‌ها */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #3498db;
+            color: white;
+        }
+
+        /* بازگشت */
+        .back-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 12px 25px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            text-decoration: none;
+        }
+
+        /* خالی */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #95a5a6;
+        }
+
+        .empty-state i {
+            font-size: 50px;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+
+        /* پاپ‌آپ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #95a5a6;
+        }
+
+        /* واکنش‌گرا */
+        @media (max-width: 768px) {
+            .admin-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-page">
+        <!-- نوار ناوبری -->
+        <div class="nav-bar">
+            <div class="user-info">
+                <div class="avatar" id="userAvatar">A</div>
+                <div>
+                    <div id="userName" style="font-weight: bold; color: #2c3e50; font-size: 1.1rem;">مدیر سیستم</div>
+                    <div id="userRole" style="font-size: 0.9rem; color: #27ae60;">سطح دسترسی: مدیر کل</div>
+                </div>
+            </div>
+            <a href="../dashboard.html" class="btn btn-secondary">
+                <i class="fas fa-arrow-right"></i> بازگشت به داشبورد
+            </a>
+        </div>
+
+        <!-- هدر -->
+        <div class="admin-header">
+            <h1><i class="fas fa-crown"></i> پنل مدیریت سیستم</h1>
+            <p>مدیریت کامل گروهان شهید توکلی - دسترسی به تمامی تنظیمات و گزارشات</p>
+        </div>
+
+        <!-- پیام‌ها -->
+        <div id="messageContainer"></div>
+
+        <!-- کارت‌های اصلی -->
+        <div class="admin-cards">
+            <!-- مدیریت کاربران -->
+            <a href="admin/users.html" class="admin-card">
+                <div class="card-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>مدیریت کاربران</h3>
+                <p>افزودن، ویرایش و حذف کاربران، تنظیم سطح دسترسی</p>
+                <div class="stats-grid" style="margin-top: 15px;">
+                    <div style="text-align: center;">
+                        <div id="usersCount" style="font-size: 1.5rem; font-weight: bold; color: #3498db;">0</div>
+                        <div style="font-size: 0.9rem; color: #7f8c8d;">کاربر</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- آمار جیره -->
+            <a href="admin/amar.html" class="admin-card">
+                <div class="card-icon" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3>آمار جیره</h3>
+                <p>مدیریت مهلت ثبت، مشاهده گزارشات و آمارها</p>
+            </a>
+
+            <!-- نفرات برتر -->
+            <a href="admin/bartar.html" class="admin-card">
+                <div class="card-icon" style="background: linear-gradient(135deg, #f1c40f, #f39c12);">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h3>نفرات برتر</h3>
+                <p>تعیین و مدیریت نفرات برتر هر رشته</p>
+            </a>
+
+            <!-- اخبار و اطلاعیه‌ها -->
+            <a href="admin/khabar.html" class="admin-card">
+                <div class="card-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <h3>اخبار و اطلاعیه‌ها</h3>
+                <p>مدیریت اخبار، اطلاعیه‌ها و فایل‌های مهم</p>
+            </a>
+
+            <!-- خوابگاه‌ها -->
+            <a href="admin/khab.html" class="admin-card">
+                <div class="card-icon" style="background: linear-gradient(135deg, #e67e22, #d35400);">
+                    <i class="fas fa-home"></i>
+                </div>
+                <h3>خوابگاه‌ها</h3>
+                <p>مدیریت خوابگاه‌ها و توزیع کاربران</p>
+            </a>
+
+            <!-- رویدادها -->
+            <a href="admin/events.html" class="admin-card">
+                <div class="card-icon" style="background: linear-gradient(135deg, #1abc9c, #16a085);">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h3>رویدادها</h3>
+                <p>مدیریت مسابقات، کتابخوانی و رویدادها</p>
+            </a>
+
+            <!-- تنبیهی‌ها -->
+            <a href="admin/sys.html" class="admin-card">
+                <div class="card-icon" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3>تنبیهی‌ها</h3>
+                <p>مدیریت موارد تنبیهی و جرایم</p>
+            </a>
+
+            <!-- تنظیمات سیستم -->
+            <a href="admin/nzm.html" class="admin-card">
+                <div class="card-icon" style="background: linear-gradient(135deg, #34495e, #2c3e50);">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h3>تنظیمات سیستم</h3>
+                <p>تنظیمات پیشرفته و مدیریت سیستم</p>
+            </a>
+
+            <!-- گزارشات سیستمی -->
+            <a href="admin/logs.html" class="admin-card">
+                <div class="card-icon" style="background: linear-gradient(135deg, #34495e, #2c3e50);">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <h3>گزارشات و لاگ</h3>
+                <p>مشاهده گزارشات فعالیت و لاگ سیستم</p>
+            </a>
+
+            <!-- پشتیبان‌گیری -->
+            <a href="admin/backup.html" class="admin-card">
+                <div class="card-icon" style="background: linear-gradient(135deg, #16a085, #27ae60);">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h3>پشتیبان‌گیری</h3>
+                <p>تهیه و بازیابی پشتیبان از داده‌ها</p>
+            </a>
+        </div>
+
+        <!-- آمار سریع -->
+        <div style="background: white; border-radius: 15px; padding: 25px; margin-top: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.08);">
+            <h3 style="margin-bottom: 20px; color: #2c3e50;"><i class="fas fa-chart-line"></i> آمار کلی سیستم</h3>
+            <div class="stats-grid">
+                <div class="stat-card" onclick="window.location.href='admin/users.html'">
+                    <i class="fas fa-users" style="color: #3498db; font-size: 30px;"></i>
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div>کاربران فعال</div>
+                </div>
+                <div class="stat-card" onclick="window.location.href='admin/amar.html'">
+                    <i class="fas fa-chart-bar" style="color: #27ae60; font-size: 30px;"></i>
+                    <div class="stat-value" id="totalRations">0</div>
+                    <div>آمار ثبت شده</div>
+                </div>
+                <div class="stat-card" onclick="window.location.href='admin/khab.html'">
+                    <i class="fas fa-bed" style="color: #e74c3c; font-size: 30px;"></i>
+                    <div class="stat-value" id="occupiedDorms">0</div>
+                    <div>خوابگاه اشغال شده</div>
+                </div>
+                <div class="stat-card" onclick="window.location.href='admin/logs.html'">
+                    <i class="fas fa-history" style="color: #f39c12; font-size: 30px;"></i>
+                    <div class="stat-value" id="totalLogs">0</div>
+                    <div>لاگ فعالیت</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- فعالیت‌های اخیر -->
+        <div style="background: white; border-radius: 15px; padding: 25px; margin-top: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.08);">
+            <h3 style="margin-bottom: 20px; color: #2c3e50;"><i class="fas fa-history"></i> فعالیت‌های اخیر</h3>
+            <div id="recentActivities">
+                <p style="text-align: center; color: #7f8c8d; padding: 20px;">در حال بارگذاری فعالیت‌ها...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- دکمه برگشت -->
+    <a href="../dashboard.html" class="back-btn">
+        <i class="fas fa-home"></i> داشبورد
+    </a>
+
+    <!-- اسکریپت‌ها -->
+    <script src="js/admin.js"></script>
+    <script>
+        // ==================== متغیرهای جهانی ====================
+        let currentAdmin = null;
+        let allUsers = [];
+
+        // ==================== توابع اولیه ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("👑 پنل مدیریت بارگذاری شد");
+            
+            // بررسی دسترسی ادمین
+            checkAdminAccess();
+            
+            // بارگذاری داده‌ها
+            loadAdminData();
+        });
+
+        // بررسی دسترسی ادمین
+        function checkAdminAccess() {
+            const userData = localStorage.getItem('currentUser');
+            if (!userData) {
+                window.location.href = '../index.html';
+                return;
+            }
+            
+            currentAdmin = JSON.parse(userData);
+            
+            if (currentAdmin.role !== 'admin') {
+                showMessage('شما دسترسی به پنل مدیریت ندارید.', 'error');
+                setTimeout(() => {
+                    window.location.href = '../dashboard.html';
+                }, 2000);
+                return;
+            }
+            
+            // به‌روزرسانی اطلاعات کاربر
+            updateAdminInfo();
+        }
+
+        // به‌روزرسانی اطلاعات ادمین
+        function updateAdminInfo() {
+            if (!currentAdmin) return;
+            
+            document.getElementById('userName').textContent = currentAdmin.fullName;
+            document.getElementById('userRole').textContent = `سطح دسترسی: ${currentAdmin.role === 'admin' ? 'مدیر کل' : 'مدیر'}`;
+            
+            // آواتار
+            const avatar = document.getElementById('userAvatar');
+            if (currentAdmin.fullName) {
+                avatar.textContent = currentAdmin.fullName.charAt(0);
+            }
+        }
+
+        // بارگذاری داده‌های مدیریتی
+        function loadAdminData() {
+            // بارگذاری کاربران
+            loadUsers();
+            
+            // به‌روزرسانی آمار
+            updateStats();
+            
+            // بارگذاری فعالیت‌های اخیر
+            loadRecentActivities();
+        }
+
+        // بارگذاری کاربران
+        function loadUsers() {
+            const usersData = localStorage.getItem('users');
+            allUsers = usersData ? JSON.parse(usersData) : [];
+            console.log(`📋 ${allUsers.length} کاربر بارگذاری شد`);
+        }
+
+        // به‌روزرسانی آمار
+        function updateStats() {
+            // تعداد کاربران فعال
+            const activeUsers = allUsers.filter(user => user.isActive !== false && user.role !== 'admin').length;
+            document.getElementById('usersCount').textContent = activeUsers;
+            document.getElementById('totalUsers').textContent = activeUsers;
+            
+            // تعداد آمار ثبت شده
+            const rations = JSON.parse(localStorage.getItem('rations') || '[]');
+            document.getElementById('totalRations').textContent = rations.length;
+            
+            // تعداد خوابگاه اشغال شده
+            const dorms = JSON.parse(localStorage.getItem('dorms') || '{}');
+            let occupiedCount = 0;
+            for (let i = 1; i <= 4; i++) {
+                if (dorms[`dorm${i}`] && dorms[`dorm${i}`].length > 0) {
+                    occupiedCount++;
+                }
+            }
+            document.getElementById('occupiedDorms').textContent = occupiedCount;
+            
+            // تعداد لاگ‌ها
+            const logs = JSON.parse(localStorage.getItem('adminLogs') || '[]');
+            document.getElementById('totalLogs').textContent = logs.length;
+        }
+
+        // بارگذاری فعالیت‌های اخیر
+        function loadRecentActivities() {
+            const logs = JSON.parse(localStorage.getItem('adminLogs') || '[]');
+            const recentActivitiesDiv = document.getElementById('recentActivities');
+            
+            if (logs.length === 0) {
+                recentActivitiesDiv.innerHTML = `
+                    <p style="text-align: center; color: #7f8c8d; padding: 20px;">
+                        هیچ فعالیتی ثبت نشده است
+                    </p>
+                `;
+                return;
+            }
+            
+            // گرفتن ۵ فعالیت آخر
+            const recentLogs = logs.slice(-5).reverse();
+            let activitiesHTML = '<div style="display: flex; flex-direction: column; gap: 10px;">';
+            
+            recentLogs.forEach(log => {
+                const date = new Date(log.timestamp);
+                const timeAgo = getTimeAgo(date);
+                
+                activitiesHTML += `
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                        <div style="width: 8px; height: 8px; background: #3498db; border-radius: 50%;"></div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: #2c3e50;">${log.action}</div>
+                            <div style="font-size: 12px; color: #7f8c8d;">
+                                توسط ${log.admin} • ${timeAgo}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            activitiesHTML += '</div>';
+            recentActivitiesDiv.innerHTML = activitiesHTML;
+        }
+
+        // محاسبه زمان گذشته
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return 'همین الان';
+            if (diffMins < 60) return `${diffMins} دقیقه پیش`;
+            if (diffHours < 24) return `${diffHours} ساعت پیش`;
+            return `${diffDays} روز پیش`;
+        }
+
+        // نمایش پیام
+        function showMessage(text, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                ${text}
+            `;
+            
+            document.getElementById('messageContainer').prepend(messageDiv);
+            
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // ==================== تست سیستم ====================
+        function testAdminSystem() {
+            console.log("🧪 تست پنل مدیریت:");
+            console.log("ادمین فعلی:", currentAdmin);
+            console.log("تعداد کاربران:", allUsers.length);
+            console.log("آمار ثبت شده:", JSON.parse(localStorage.getItem('rations') || '[]').length);
+        }
+
+        // اجرای تست (در صورت نیاز)
+        // setTimeout(testAdminSystem, 1000);
+    </script>
+</body>
+</html>
